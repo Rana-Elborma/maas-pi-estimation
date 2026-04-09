@@ -1,7 +1,7 @@
 # 🔢 Math as a Service (MaaS) — Monte Carlo π Estimation
 
 > **SWE 455: Cloud Applications Engineering — Homework 2**
-> Term 252 | Group of 2 | Due: April 11 @ 11:59 PM
+> Term 252 | Group of 3 | Due: April 11 @ 11:59 PM
 
 A scalable, event-driven, serverless backend that estimates the value of **π** using Monte Carlo simulation, exposed as a REST API on Google Cloud.
 
@@ -10,7 +10,7 @@ A scalable, event-driven, serverless backend that estimates the value of **π** 
 ## 📋 Table of Contents
 
 - [Architecture](#architecture)
-- [Project Structure](#project-structure)
+- [Homework Structure](#homework-structure)
 - [Services](#services)
 - [Infrastructure (Terraform)](#infrastructure-terraform)
 - [Getting Started](#getting-started)
@@ -85,7 +85,7 @@ This system implements an **event-driven, serverless architecture** on Google Cl
 
 ---
 
-## Project Structure
+## Homework Structure
 
 ```
 maas-pi-estimation/
@@ -305,4 +305,4 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 
 ## License
 
-This project is for academic purposes — SWE 455, Term 252.
+This homework is submitted for academic purposes — SWE 455, Term 252.
