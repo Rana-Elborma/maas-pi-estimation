@@ -291,16 +291,6 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
   }
 ]
 ```
-
----
-
-## Authors
-
-| Name | Role |
-|------|------|
-| — | Receiver Service + API Gateway |
-| — | Worker Service + Terraform |
-
 ---
 
 ## License
