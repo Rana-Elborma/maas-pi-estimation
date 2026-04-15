@@ -1,0 +1,928 @@
+{
+  "version": 4,
+  "terraform_version": "1.14.8",
+  "serial": 25,
+  "lineage": "3d101f7e-a6ee-de89-47e4-96a8060b4283",
+  "outputs": {
+    "firestore_database": {
+      "value": "(default)",
+      "type": "string"
+    },
+    "pubsub_subscription": {
+      "value": "projects/project-6d7978f3-a6c7-4396-a50/subscriptions/pi-estimation-topic-sub",
+      "type": "string"
+    },
+    "pubsub_topic": {
+      "value": "projects/project-6d7978f3-a6c7-4396-a50/topics/pi-estimation-topic",
+      "type": "string"
+    },
+    "worker_service_url": {
+      "value": "https://worker-service-noimoiczfa-uc.a.run.app",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "google_api_gateway_api",
+      "name": "maas_api",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google-beta\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "api_id": "maas-api",
+            "create_time": "2026-04-15T12:11:18.294078427Z",
+            "display_name": "maas-api",
+            "effective_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/locations/global/apis/maas-api",
+            "labels": {},
+            "managed_service": "maas-api-3gz5zsq8kx3me.apigateway.project-6d7978f3-a6c7-4396-a50.cloud.goog",
+            "name": "projects/project-6d7978f3-a6c7-4396-a50/locations/global/apis/maas-api",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "terraform_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_id": "maas-api",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_cloud_run_v2_service",
+      "name": "receiver",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "status": "tainted",
+          "schema_version": 0,
+          "attributes": {
+            "annotations": {},
+            "binary_authorization": [],
+            "build_config": [],
+            "client": "",
+            "client_version": "",
+            "conditions": [
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:11:27.709374Z",
+                "message": "Cloud Run does not support image 'us-central1-docker.pkg.dev/project-6d7978f3-a6c7-4396-a50/maas-repo/receiver-service:latest': Container manifest type 'application/vnd.oci.image.index.v1+json' must support amd64/linux.",
+                "reason": "REVISION_FAILED",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_FAILED",
+                "type": "RoutesReady"
+              },
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:11:24.820324Z",
+                "message": "Cloud Run does not support image 'us-central1-docker.pkg.dev/project-6d7978f3-a6c7-4396-a50/maas-repo/receiver-service:latest': Container manifest type 'application/vnd.oci.image.index.v1+json' must support amd64/linux.",
+                "reason": "",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_FAILED",
+                "type": "ConfigurationsReady"
+              }
+            ],
+            "create_time": "2026-04-15T12:11:24.332236Z",
+            "creator": "rranamah00@gmail.com",
+            "custom_audiences": [],
+            "default_uri_disabled": false,
+            "delete_time": "",
+            "deletion_protection": true,
+            "description": "",
+            "effective_annotations": {},
+            "effective_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "etag": "\"COyA_s4GEOCJtp4B/cHJvamVjdHMvcHJvamVjdC02ZDc5NzhmMy1hNmM3LTQzOTYtYTUwL2xvY2F0aW9ucy91cy1jZW50cmFsMS9zZXJ2aWNlcy9yZWNlaXZlci1zZXJ2aWNl\"",
+            "expire_time": "",
+            "generation": "1",
+            "iap_enabled": false,
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/receiver-service",
+            "ingress": "INGRESS_TRAFFIC_ALL",
+            "invoker_iam_disabled": false,
+            "labels": {},
+            "last_modifier": "rranamah00@gmail.com",
+            "latest_created_revision": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/receiver-service/revisions/receiver-service-00001-clr",
+            "latest_ready_revision": "",
+            "launch_stage": "GA",
+            "location": "us-central1",
+            "multi_region_settings": [],
+            "name": "receiver-service",
+            "observed_generation": "1",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "reconciling": false,
+            "scaling": [
+              {
+                "manual_instance_count": 0,
+                "max_instance_count": 10,
+                "min_instance_count": 0,
+                "scaling_mode": ""
+              }
+            ],
+            "template": [
+              {
+                "annotations": {},
+                "containers": [
+                  {
+                    "args": [],
+                    "base_image_uri": "",
+                    "build_info": [],
+                    "command": [],
+                    "depends_on": [],
+                    "env": [
+                      {
+                        "name": "LOCAL_MOCK_PUBLISH",
+                        "value": "false",
+                        "value_source": []
+                      },
+                      {
+                        "name": "PUBSUB_TOPIC_PATH",
+                        "value": "projects/project-6d7978f3-a6c7-4396-a50/topics/pi-estimation-topic",
+                        "value_source": []
+                      }
+                    ],
+                    "image": "us-central1-docker.pkg.dev/project-6d7978f3-a6c7-4396-a50/maas-repo/receiver-service:latest",
+                    "liveness_probe": [],
+                    "name": "",
+                    "ports": [
+                      {
+                        "container_port": 8080,
+                        "name": "http1"
+                      }
+                    ],
+                    "readiness_probe": [],
+                    "resources": [
+                      {
+                        "cpu_idle": false,
+                        "limits": {
+                          "cpu": "1",
+                          "memory": "512Mi"
+                        },
+                        "startup_cpu_boost": false
+                      }
+                    ],
+                    "startup_probe": [
+                      {
+                        "failure_threshold": 1,
+                        "grpc": [],
+                        "http_get": [],
+                        "initial_delay_seconds": 0,
+                        "period_seconds": 240,
+                        "tcp_socket": [
+                          {
+                            "port": 8080
+                          }
+                        ],
+                        "timeout_seconds": 240
+                      }
+                    ],
+                    "volume_mounts": [],
+                    "working_dir": ""
+                  }
+                ],
+                "encryption_key": "",
+                "execution_environment": "",
+                "gpu_zonal_redundancy_disabled": false,
+                "health_check_disabled": false,
+                "labels": {},
+                "max_instance_request_concurrency": 80,
+                "node_selector": [],
+                "revision": "",
+                "scaling": [
+                  {
+                    "max_instance_count": 10,
+                    "min_instance_count": 0
+                  }
+                ],
+                "service_account": "receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+                "session_affinity": false,
+                "timeout": "300s",
+                "volumes": [],
+                "vpc_access": []
+              }
+            ],
+            "terminal_condition": [
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:11:27.709374Z",
+                "message": "Cloud Run does not support image 'us-central1-docker.pkg.dev/project-6d7978f3-a6c7-4396-a50/maas-repo/receiver-service:latest': Container manifest type 'application/vnd.oci.image.index.v1+json' must support amd64/linux.",
+                "reason": "REVISION_FAILED",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_FAILED",
+                "type": "Ready"
+              }
+            ],
+            "terraform_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "timeouts": null,
+            "traffic": [
+              {
+                "percent": 100,
+                "revision": "",
+                "tag": "",
+                "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+              }
+            ],
+            "traffic_statuses": [],
+            "uid": "ee66f457-abea-4f1a-99c5-21322cc68c0d",
+            "update_time": "2026-04-15T12:11:24.332236Z",
+            "uri": "",
+            "urls": [
+              "https://receiver-service-662463641417.us-central1.run.app"
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "location": "us-central1",
+            "name": "receiver-service",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_project_service.apis",
+            "google_pubsub_topic.pi_topic",
+            "google_service_account.receiver_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_cloud_run_v2_service",
+      "name": "worker",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "annotations": {},
+            "binary_authorization": [],
+            "build_config": [],
+            "client": "",
+            "client_version": "",
+            "conditions": [
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:17:02.925074Z",
+                "message": "",
+                "reason": "",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_SUCCEEDED",
+                "type": "RoutesReady"
+              },
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:16:52.140417Z",
+                "message": "",
+                "reason": "",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_SUCCEEDED",
+                "type": "ConfigurationsReady"
+              }
+            ],
+            "create_time": "2026-04-15T12:16:47.734971Z",
+            "creator": "rranamah00@gmail.com",
+            "custom_audiences": [],
+            "default_uri_disabled": false,
+            "delete_time": "",
+            "deletion_protection": false,
+            "description": "",
+            "effective_annotations": {},
+            "effective_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "etag": "\"CK-D_s4GEPiIu94C/cHJvamVjdHMvcHJvamVjdC02ZDc5NzhmMy1hNmM3LTQzOTYtYTUwL2xvY2F0aW9ucy91cy1jZW50cmFsMS9zZXJ2aWNlcy93b3JrZXItc2VydmljZQ\"",
+            "expire_time": "",
+            "generation": "1",
+            "iap_enabled": false,
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/worker-service",
+            "ingress": "INGRESS_TRAFFIC_ALL",
+            "invoker_iam_disabled": false,
+            "labels": {},
+            "last_modifier": "rranamah00@gmail.com",
+            "latest_created_revision": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/worker-service/revisions/worker-service-00001-8xr",
+            "latest_ready_revision": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/worker-service/revisions/worker-service-00001-8xr",
+            "launch_stage": "GA",
+            "location": "us-central1",
+            "multi_region_settings": [],
+            "name": "worker-service",
+            "observed_generation": "1",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "reconciling": false,
+            "scaling": [
+              {
+                "manual_instance_count": 0,
+                "max_instance_count": 28,
+                "min_instance_count": 0,
+                "scaling_mode": ""
+              }
+            ],
+            "template": [
+              {
+                "annotations": {},
+                "containers": [
+                  {
+                    "args": [],
+                    "base_image_uri": "",
+                    "build_info": [],
+                    "command": [],
+                    "depends_on": [],
+                    "env": [
+                      {
+                        "name": "FIRESTORE_COLLECTION",
+                        "value": "pi_estimations",
+                        "value_source": []
+                      },
+                      {
+                        "name": "LOCAL_MOCK_FIRESTORE",
+                        "value": "false",
+                        "value_source": []
+                      }
+                    ],
+                    "image": "us-central1-docker.pkg.dev/project-6d7978f3-a6c7-4396-a50/maas-repo/worker-service:latest",
+                    "liveness_probe": [],
+                    "name": "",
+                    "ports": [
+                      {
+                        "container_port": 8080,
+                        "name": "http1"
+                      }
+                    ],
+                    "readiness_probe": [],
+                    "resources": [
+                      {
+                        "cpu_idle": false,
+                        "limits": {
+                          "cpu": "2",
+                          "memory": "1Gi"
+                        },
+                        "startup_cpu_boost": false
+                      }
+                    ],
+                    "startup_probe": [
+                      {
+                        "failure_threshold": 1,
+                        "grpc": [],
+                        "http_get": [],
+                        "initial_delay_seconds": 0,
+                        "period_seconds": 240,
+                        "tcp_socket": [
+                          {
+                            "port": 8080
+                          }
+                        ],
+                        "timeout_seconds": 240
+                      }
+                    ],
+                    "volume_mounts": [],
+                    "working_dir": ""
+                  }
+                ],
+                "encryption_key": "",
+                "execution_environment": "",
+                "gpu_zonal_redundancy_disabled": false,
+                "health_check_disabled": false,
+                "labels": {},
+                "max_instance_request_concurrency": 160,
+                "node_selector": [],
+                "revision": "",
+                "scaling": [
+                  {
+                    "max_instance_count": 28,
+                    "min_instance_count": 0
+                  }
+                ],
+                "service_account": "worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+                "session_affinity": false,
+                "timeout": "300s",
+                "volumes": [],
+                "vpc_access": []
+              }
+            ],
+            "terminal_condition": [
+              {
+                "execution_reason": "",
+                "last_transition_time": "2026-04-15T12:17:02.969623Z",
+                "message": "",
+                "reason": "",
+                "revision_reason": "",
+                "severity": "",
+                "state": "CONDITION_SUCCEEDED",
+                "type": "Ready"
+              }
+            ],
+            "terraform_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "timeouts": null,
+            "traffic": [
+              {
+                "percent": 100,
+                "revision": "",
+                "tag": "",
+                "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+              }
+            ],
+            "traffic_statuses": [
+              {
+                "percent": 100,
+                "revision": "",
+                "tag": "",
+                "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
+                "uri": ""
+              }
+            ],
+            "uid": "b3761566-2602-4240-a986-59b4c56f8ce3",
+            "update_time": "2026-04-15T12:16:47.734971Z",
+            "uri": "https://worker-service-noimoiczfa-uc.a.run.app",
+            "urls": [
+              "https://worker-service-662463641417.us-central1.run.app",
+              "https://worker-service-noimoiczfa-uc.a.run.app"
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "location": "us-central1",
+            "name": "worker-service",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_firestore_database.pi_db",
+            "google_project_service.apis",
+            "google_service_account.worker_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_cloud_run_v2_service_iam_member",
+      "name": "pubsub_invoke_worker",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "condition": [],
+            "etag": "BwZPfrIhljo=",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/worker-service/roles/run.invoker/serviceAccount:pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "location": "us-central1",
+            "member": "serviceAccount:pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "name": "projects/project-6d7978f3-a6c7-4396-a50/locations/us-central1/services/worker-service",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "role": "roles/run.invoker"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "google_cloud_run_v2_service.worker",
+            "google_firestore_database.pi_db",
+            "google_project_service.apis",
+            "google_service_account.pubsub_invoker_sa",
+            "google_service_account.worker_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_firestore_database",
+      "name": "pi_db",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "app_engine_integration_mode": "DISABLED",
+            "cmek_config": [],
+            "concurrency_mode": "PESSIMISTIC",
+            "create_time": "2026-04-15T12:11:12.413673Z",
+            "database_edition": "STANDARD",
+            "delete_protection_state": "DELETE_PROTECTION_DISABLED",
+            "deletion_policy": "ABANDON",
+            "earliest_version_time": "2026-04-15T12:11:12.413673Z",
+            "etag": "IPnxzazr75MDMOnP/OTp75MD",
+            "firestore_data_access_mode": "",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/databases/(default)",
+            "key_prefix": "",
+            "location_id": "us-central1",
+            "mongodb_compatible_data_access_mode": "",
+            "name": "(default)",
+            "point_in_time_recovery_enablement": "POINT_IN_TIME_RECOVERY_DISABLED",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "realtime_updates_mode": "REALTIME_UPDATES_MODE_ENABLED",
+            "tags": null,
+            "timeouts": null,
+            "type": "FIRESTORE_NATIVE",
+            "uid": "b71ab0f9-9835-432d-ac29-aaf2cf2b757a",
+            "update_time": "2026-04-15T12:11:12.413673Z",
+            "version_retention_period": "3600s"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "name": "(default)",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_project_iam_member",
+      "name": "receiver_pubsub_publisher",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "condition": [],
+            "etag": "BwZPfp3nsjE=",
+            "id": "project-6d7978f3-a6c7-4396-a50/roles/pubsub.publisher/serviceAccount:receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "member": "serviceAccount:receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "role": "roles/pubsub.publisher"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "google_project_service.apis",
+            "google_service_account.receiver_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_project_iam_member",
+      "name": "worker_firestore_writer",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "condition": [],
+            "etag": "BwZPfp3nsjE=",
+            "id": "project-6d7978f3-a6c7-4396-a50/roles/datastore.user/serviceAccount:worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "member": "serviceAccount:worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "role": "roles/datastore.user"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "google_project_service.apis",
+            "google_service_account.worker_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_project_service",
+      "name": "apis",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "index_key": "apigateway.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/apigateway.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "apigateway.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "firestore.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/firestore.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "firestore.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "iam.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/iam.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "iam.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "pubsub.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/pubsub.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "pubsub.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "run.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/run.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "run.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "servicecontrol.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/servicecontrol.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "servicecontrol.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        },
+        {
+          "index_key": "servicemanagement.googleapis.com",
+          "schema_version": 0,
+          "attributes": {
+            "disable_dependent_services": null,
+            "disable_on_destroy": false,
+            "id": "project-6d7978f3-a6c7-4396-a50/servicemanagement.googleapis.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "service": "servicemanagement.googleapis.com",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjYwMDAwMDAwMDAwMCwidXBkYXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_pubsub_subscription",
+      "name": "pi_subscription",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "ack_deadline_seconds": 600,
+            "bigquery_config": [],
+            "cloud_storage_config": [],
+            "dead_letter_policy": [],
+            "effective_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "enable_exactly_once_delivery": false,
+            "enable_message_ordering": false,
+            "expiration_policy": [
+              {
+                "ttl": "2678400s"
+              }
+            ],
+            "filter": "",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/subscriptions/pi-estimation-topic-sub",
+            "labels": {},
+            "message_retention_duration": "600s",
+            "message_transforms": [],
+            "name": "pi-estimation-topic-sub",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "push_config": [
+              {
+                "attributes": {},
+                "no_wrapper": [],
+                "oidc_token": [
+                  {
+                    "audience": "",
+                    "service_account_email": "pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com"
+                  }
+                ],
+                "push_endpoint": "https://worker-service-noimoiczfa-uc.a.run.app/pubsub/push"
+              }
+            ],
+            "retain_acked_messages": false,
+            "retry_policy": [],
+            "tags": null,
+            "terraform_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "timeouts": null,
+            "topic": "projects/project-6d7978f3-a6c7-4396-a50/topics/pi-estimation-topic"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "name": "pi-estimation-topic-sub",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_cloud_run_v2_service.worker",
+            "google_firestore_database.pi_db",
+            "google_project_service.apis",
+            "google_pubsub_topic.pi_topic",
+            "google_service_account.pubsub_invoker_sa",
+            "google_service_account.worker_sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_pubsub_topic",
+      "name": "pi_topic",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "effective_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/topics/pi-estimation-topic",
+            "ingestion_data_source_settings": [],
+            "kms_key_name": "",
+            "labels": {},
+            "message_retention_duration": "",
+            "message_storage_policy": [],
+            "message_transforms": [],
+            "name": "pi-estimation-topic",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "schema_settings": [],
+            "tags": null,
+            "terraform_labels": {
+              "goog-terraform-provisioned": "true"
+            },
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "name": "pi-estimation-topic",
+            "project": "project-6d7978f3-a6c7-4396-a50"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_service_account",
+      "name": "pubsub_invoker_sa",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "pubsub-invoker-sa",
+            "create_ignore_already_exists": null,
+            "description": "",
+            "disabled": false,
+            "display_name": "Pub/Sub Cloud Run Invoker",
+            "email": "pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "member": "serviceAccount:pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "name": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/pubsub-invoker-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "timeouts": null,
+            "unique_id": "110541168526893251587"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_service_account",
+      "name": "receiver_sa",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "receiver-service-sa",
+            "create_ignore_already_exists": null,
+            "description": "",
+            "disabled": false,
+            "display_name": "Receiver Service Account",
+            "email": "receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "member": "serviceAccount:receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "name": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/receiver-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "timeouts": null,
+            "unique_id": "100351286849644043434"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "google_service_account",
+      "name": "worker_sa",
+      "provider": "provider[\"registry.terraform.io/hashicorp/google\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "worker-service-sa",
+            "create_ignore_already_exists": null,
+            "description": "",
+            "disabled": false,
+            "display_name": "Worker Service Account",
+            "email": "worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "id": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "member": "serviceAccount:worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "name": "projects/project-6d7978f3-a6c7-4396-a50/serviceAccounts/worker-service-sa@project-6d7978f3-a6c7-4396-a50.iam.gserviceaccount.com",
+            "project": "project-6d7978f3-a6c7-4396-a50",
+            "timeouts": null,
+            "unique_id": "104926677540496463594"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "google_project_service.apis"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

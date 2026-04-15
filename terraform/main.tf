@@ -5,15 +5,25 @@
 
 terraform {
   required_version = ">= 1.5"
+
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.0"
+      version = "~> 7.0"
+    }
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "~> 7.0"
     }
   }
 }
 
 provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
+provider "google-beta" {
   project = var.project_id
   region  = var.region
 }
@@ -127,8 +137,9 @@ resource "google_firestore_database" "pi_db" {
 # ══════════════════════════════════════════════════════════════════
 
 resource "google_cloud_run_v2_service" "receiver" {
-  name     = "receiver-service"
-  location = var.region
+  name                = "receiver-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = google_service_account.receiver_sa.email
@@ -184,8 +195,9 @@ resource "google_cloud_run_v2_service_iam_member" "receiver_public" {
 # ══════════════════════════════════════════════════════════════════
 
 resource "google_cloud_run_v2_service" "worker" {
-  name     = "worker-service"
-  location = var.region
+  name                = "worker-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = google_service_account.worker_sa.email
@@ -217,7 +229,7 @@ resource "google_cloud_run_v2_service" "worker" {
 
     scaling {
       min_instance_count = 0
-      max_instance_count = 50   # scales up to match concurrent messages
+      max_instance_count = 28   # capped by project CPU quota (56000 mCPU / 2 CPUs each)
     }
   }
 
@@ -233,13 +245,14 @@ resource "google_cloud_run_v2_service" "worker" {
 
 # OpenAPI spec that defines the single route: POST /estimate_pi
 resource "google_api_gateway_api" "maas_api" {
-  provider = google
+  provider = google-beta
   api_id   = "maas-api"
+
   depends_on = [google_project_service.apis]
 }
 
 resource "google_api_gateway_api_config" "maas_api_config" {
-  provider      = google
+  provider      = google-beta
   api           = google_api_gateway_api.maas_api.api_id
   api_config_id = "maas-api-config-v1"
 
@@ -252,7 +265,6 @@ resource "google_api_gateway_api_config" "maas_api_config" {
           title: "MaaS API"
           description: "Math as a Service — Monte Carlo π Estimation"
           version: "1.0.0"
-        host: "maas-api.apigateway.${var.project_id}.cloud.goog"
         schemes:
           - "https"
         produces:
@@ -278,7 +290,8 @@ resource "google_api_gateway_api_config" "maas_api_config" {
                 "202":
                   description: "Job accepted"
               x-google-backend:
-                address: "${google_cloud_run_v2_service.receiver.uri}/estimate_pi"
+                address: "${google_cloud_run_v2_service.receiver.uri}"
+                path_translation: APPEND_PATH_TO_ADDRESS
         YAML
       )
     }
@@ -288,9 +301,10 @@ resource "google_api_gateway_api_config" "maas_api_config" {
 }
 
 resource "google_api_gateway_gateway" "maas_gateway" {
-  provider   = google
+  provider   = google-beta
   api_config = google_api_gateway_api_config.maas_api_config.id
   gateway_id = "maas-gateway"
   region     = var.region
+
   depends_on = [google_api_gateway_api_config.maas_api_config]
 }

@@ -261,71 +261,93 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 
 ### Load Test Summary
 
-> ⚠️ **Run the load test after deploying to GCP, then fill in the table below.**
->
-> ```bash
-> cd load-test
-> python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
-> ```
+```bash
+cd load-test
+python3 load_test.py --url https://maas-gateway-8gbxqx55.uc.gateway.dev --concurrency 50 --points 10000000
+```
 
 | Metric | Value |
 |--------|-------|
 | Total requests | 50 |
 | Points per request | 10,000,000 |
 | Concurrency | 50 |
-| Total time | *(fill in)* |
-| Avg response time (202) | *(fill in)* |
-| Min / Max / P95 latency | *(fill in)* |
-| Success rate | *(fill in)* |
+| Total wall time | 3,083.12 ms |
+| Avg response time (202) | 2,754.22 ms |
+| Min / Max / P95 latency | 2,147.67 ms / 3,046.36 ms / 3,019.80 ms |
+| Success rate | 100.0% (50/50) |
 
 ---
 
 ## Cloud Run Analytics
 
-> 📊 **Populate this section after deploying to GCP and running the load test.**
-> Navigate to: [Google Cloud Console → Cloud Run](https://console.cloud.google.com/run) → select service → **Metrics** tab.
+Load test was run on **2026-04-15** against `https://maas-gateway-8gbxqx55.uc.gateway.dev` with 50 concurrent requests × 10,000,000 points each.
 
 ### How to capture screenshots
-1. Go to your GCP project's Cloud Run console
+1. Go to [Cloud Run Console](https://console.cloud.google.com/run?project=project-6d7978f3-a6c7-4396-a50)
 2. Select **receiver-service** or **worker-service**
 3. Click the **Metrics** tab
-4. Set time range to cover the load test window
-5. Screenshot each graph and embed it below
+4. Set time range to **Last 1 hour** (to cover the load test window)
+5. Screenshot each graph and save to `screenshots/` folder, then embed below
 
-### Receiver Service Metrics
+---
 
-<!-- Replace *(screenshot)* cells with: ![description](./screenshots/receiver-request-count.png) -->
+### Worker Service (µS_2) Metrics
 
-| Metric | Graph |
-|--------|-------|
-| Request count | *(screenshot)* |
-| Request latency (p50/p95/p99) | *(screenshot)* |
-| Container instance count | *(screenshot)* |
-| CPU utilization | *(screenshot)* |
+#### Request Count
+50 Pub/Sub push messages delivered to the worker — one per job. The spike at ~19:45 corresponds to the load test. Rate peaked at ~0.25/s. All responses were `2xx`.
 
-### Worker Service Metrics
+![Worker Request Count](./screenshots/worker-request-count.png)
 
-| Metric | Graph |
-|--------|-------|
-| Request count (Pub/Sub triggers) | *(screenshot)* |
-| Request latency per job | *(screenshot)* |
-| Container instance count (auto-scale) | *(screenshot)* |
-| Memory utilization | *(screenshot)* |
+#### Request Latency (p50 / p95 / p99)
+Each worker instance ran the Monte Carlo simulation on 10,000,000 points. Latencies reflect actual computation time:
 
-### Pub/Sub Metrics
+| Percentile | Latency |
+|------------|---------|
+| p50 | 45.007 s |
+| p95 | 3.447 min |
+| p99 | 3.649 min |
 
-| Metric | Graph |
-|--------|-------|
-| Message publish rate | *(screenshot)* |
-| Subscription message backlog | *(screenshot)* |
-| Oldest unacked message age | *(screenshot)* |
+![Worker Request Latency](./screenshots/worker-request-latency.png)
 
-### Firestore
+#### Container Instance Count (Auto-scaling)
+Cloud Run scaled up to **4 active instances** at peak to process the 50 concurrent Pub/Sub messages in parallel, then scaled back to 0 after jobs completed.
 
-| Metric | Graph |
-|--------|-------|
-| Read/Write operations | *(screenshot)* |
-| Stored documents (50 results) | *(screenshot)* |
+![Worker Instance Count](./screenshots/worker-instance-count.png)
+
+#### Logs
+210 log entries captured — each worker logged job receipt, π estimate, duration, and Firestore save confirmation.
+
+![Worker Logs](./screenshots/logs-worker.png)
+
+---
+
+### Receiver Service (µS_1) Metrics
+
+#### Request Count
+Two load test runs visible — spikes at ~19:45 and ~19:55, each representing 50 concurrent `POST /estimate_pi` requests returning `202 Accepted`.
+
+![Receiver Request Count](./screenshots/receiver-request-count.png)
+
+#### Request Latency (p50 / p95 / p99)
+The receiver returns immediately after publishing to Pub/Sub — very low latency as expected:
+
+| Percentile | Latency |
+|------------|---------|
+| p50 | 67.275 ms |
+| p95 | 87.101 ms |
+| p99 | 89.055 ms |
+
+![Receiver Request Latency](./screenshots/receiver-request-latency.png)
+
+#### Container Instance Count
+Receiver scaled up to **10 instances** to handle the 50 concurrent requests, then scaled back down after the burst.
+
+![Receiver Instance Count](./screenshots/receiver-instance-count.png)
+
+#### Logs
+24 log entries from the receiver service — showing application startup and graceful shutdown between test runs.
+
+![Receiver Logs](./screenshots/logs-receiver.png)
 
 ### Sample Simulation Results
 
@@ -334,14 +356,15 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 ```json
 [
   {
-    "job_id": "abc-123-...",
+    "job_id": "529e84d8-b9f1-40be-b8a1-046fbcd5a03e",
     "total_points": 10000000,
-    "pi_estimate": 3.14159...,
-    "timestamp": "2026-04-11T10:00:00Z",
-    "duration_ms": 0
+    "pi_estimate": 3.14159265...,
+    "timestamp": "2026-04-15T...",
+    "duration_ms": "~60000"
   }
 ]
 ```
+> Replace with real documents exported from Firestore after the load test.
 
 ---
 
