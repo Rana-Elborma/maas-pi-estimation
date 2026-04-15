@@ -161,9 +161,44 @@ The following GCP resources are provisioned via Terraform:
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
+git clone https://github.com/Rana-Elborma/maas-pi-estimation.git
 cd maas-pi-estimation
+```
 
+### Local Development (without GCP)
+
+Each service has its own virtual environment. Run these once to set them up:
+
+```bash
+# Receiver Service
+cd receiver-service
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+
+# Worker Service (separate terminal)
+cd ../worker-service
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+Start the receiver locally (mock mode — no real Pub/Sub needed):
+
+```bash
+cd receiver-service
+LOCAL_MOCK_PUBLISH=true .venv/bin/uvicorn main:app --reload --port 8080
+```
+
+Test it:
+
+```bash
+curl -X POST http://localhost:8080/estimate_pi \
+  -H "Content-Type: application/json" \
+  -d '{"total_points": 100000}'
+```
+
+### GCP Deployment
+
+```bash
 # 2. Authenticate with GCP
 gcloud auth login
 gcloud auth application-default login
@@ -221,27 +256,40 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 
 ### Load Test Summary
 
-> ⚠️ **To be filled after running the load test**
+> ⚠️ **Run the load test after deploying to GCP, then fill in the table below.**
+>
+> ```bash
+> cd load-test
+> python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
+> ```
 
 | Metric | Value |
 |--------|-------|
 | Total requests | 50 |
 | Points per request | 10,000,000 |
 | Concurrency | 50 |
-| Total time | — |
-| Avg response time (202) | — |
-| Min / Max / P95 latency | — |
-| Success rate | — |
+| Total time | *(fill in)* |
+| Avg response time (202) | *(fill in)* |
+| Min / Max / P95 latency | *(fill in)* |
+| Success rate | *(fill in)* |
 
 ---
 
 ## Cloud Run Analytics
 
-> 📊 **This section will be populated after deploying and running the load test.**
+> 📊 **Populate this section after deploying to GCP and running the load test.**
+> Navigate to: [Google Cloud Console → Cloud Run](https://console.cloud.google.com/run) → select service → **Metrics** tab.
+
+### How to capture screenshots
+1. Go to your GCP project's Cloud Run console
+2. Select **receiver-service** or **worker-service**
+3. Click the **Metrics** tab
+4. Set time range to cover the load test window
+5. Screenshot each graph and embed it below
 
 ### Receiver Service Metrics
 
-<!-- Screenshots from Cloud Run > receiver-service > Metrics tab go here -->
+<!-- Replace *(screenshot)* cells with: ![description](./screenshots/receiver-request-count.png) -->
 
 | Metric | Graph |
 |--------|-------|
@@ -251,8 +299,6 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 | CPU utilization | *(screenshot)* |
 
 ### Worker Service Metrics
-
-<!-- Screenshots from Cloud Run > worker-service > Metrics tab go here -->
 
 | Metric | Graph |
 |--------|-------|
@@ -278,19 +324,30 @@ python load_test.py --url <API_GATEWAY_URL> --concurrency 50 --points 10000000
 
 ### Sample Simulation Results
 
-> Results from Firestore after load test:
+> Replace the example below with real results from Firestore after running the load test.
 
 ```json
 [
   {
-    "job_id": "...",
+    "job_id": "abc-123-...",
     "total_points": 10000000,
     "pi_estimate": 3.14159...,
-    "timestamp": "2026-04-11T...",
-    "duration_ms": ...
+    "timestamp": "2026-04-11T10:00:00Z",
+    "duration_ms": 0
   }
 ]
 ```
+
+---
+
+## Contributors
+
+| Name | Role |
+|------|------|
+| Rana Elborma | Architecture, Receiver Service, Terraform |
+| *(Team member 2)* | Worker Service |
+| *(Team member 3)* | Load Testing / Firestore |
+
 ---
 
 ## License
