@@ -23,6 +23,11 @@ output "pubsub_subscription" {
   value       = google_pubsub_subscription.pi_subscription.id
 }
 
+output "websocket_service_url" {
+  description = "Cloud Run URL of the WebSocket Service"
+  value       = google_cloud_run_v2_service.websocket.uri
+}
+
 output "firestore_database" {
   description = "Firestore database name"
   value       = google_firestore_database.pi_db.name

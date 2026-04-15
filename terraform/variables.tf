@@ -19,6 +19,11 @@ variable "worker_image" {
   type        = string
 }
 
+variable "websocket_image" {
+  description = "Docker image URI for the WebSocket Service (e.g. gcr.io/PROJECT/websocket-service:latest)"
+  type        = string
+}
+
 variable "pubsub_topic_name" {
   description = "Name of the Pub/Sub topic used as the event bridge"
   type        = string

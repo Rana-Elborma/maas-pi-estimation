@@ -82,6 +82,13 @@ resource "google_project_iam_member" "worker_firestore_writer" {
   member  = "serviceAccount:${google_service_account.worker_sa.email}"
 }
 
+# ── IAM: Worker can publish to results topic ─────────────────────
+resource "google_project_iam_member" "worker_pubsub_publisher" {
+  project = var.project_id
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:${google_service_account.worker_sa.email}"
+}
+
 # ── IAM: Pub/Sub invoker can call the Worker Cloud Run service ────
 resource "google_cloud_run_v2_service_iam_member" "pubsub_invoke_worker" {
   project  = var.project_id
@@ -95,12 +102,13 @@ resource "google_cloud_run_v2_service_iam_member" "pubsub_invoke_worker" {
 # CLOUD PUB/SUB (Event Bridge)
 # ══════════════════════════════════════════════════════════════════
 
+# Topic 1: pi_estimation_requested — Receiver → Worker
 resource "google_pubsub_topic" "pi_topic" {
   name       = var.pubsub_topic_name
   depends_on = [google_project_service.apis]
 }
 
-# Push subscription — Pub/Sub delivers messages directly to the Worker
+# Push subscription — delivers job events to Worker Service
 resource "google_pubsub_subscription" "pi_subscription" {
   name  = "${var.pubsub_topic_name}-sub"
   topic = google_pubsub_topic.pi_topic.name
@@ -113,10 +121,35 @@ resource "google_pubsub_subscription" "pi_subscription" {
     }
   }
 
-  ack_deadline_seconds       = 600   # 10 min — enough for 10M points
+  ack_deadline_seconds       = 600
   message_retention_duration = "600s"
 
   depends_on = [google_cloud_run_v2_service.worker]
+}
+
+# Topic 2: pi_estimation_completed — Worker → WebSocket Service
+resource "google_pubsub_topic" "pi_results_topic" {
+  name       = "${var.pubsub_topic_name}-results"
+  depends_on = [google_project_service.apis]
+}
+
+# Push subscription — delivers result events to WebSocket Service
+resource "google_pubsub_subscription" "pi_results_subscription" {
+  name  = "${var.pubsub_topic_name}-results-sub"
+  topic = google_pubsub_topic.pi_results_topic.name
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.websocket.uri}/pubsub/push"
+
+    oidc_token {
+      service_account_email = google_service_account.pubsub_invoker_sa.email
+    }
+  }
+
+  ack_deadline_seconds       = 60
+  message_retention_duration = "600s"
+
+  depends_on = [google_cloud_run_v2_service.websocket]
 }
 
 # ══════════════════════════════════════════════════════════════════
@@ -219,6 +252,16 @@ resource "google_cloud_run_v2_service" "worker" {
         value = "false"
       }
 
+      env {
+        name  = "RESULTS_TOPIC_PATH"
+        value = google_pubsub_topic.pi_results_topic.id
+      }
+
+      env {
+        name  = "LOCAL_MOCK_PUBLISH"
+        value = "false"
+      }
+
       resources {
         limits = {
           cpu    = "2"
@@ -237,6 +280,66 @@ resource "google_cloud_run_v2_service" "worker" {
     google_project_service.apis,
     google_firestore_database.pi_db,
   ]
+}
+
+# ══════════════════════════════════════════════════════════════════
+# CLOUD RUN — WEBSOCKET SERVICE
+# ══════════════════════════════════════════════════════════════════
+
+resource "google_service_account" "websocket_sa" {
+  account_id   = "websocket-service-sa"
+  display_name = "WebSocket Service Account"
+  depends_on   = [google_project_service.apis]
+}
+
+resource "google_cloud_run_v2_service" "websocket" {
+  name                = "websocket-service"
+  location            = var.region
+  deletion_protection = false
+
+  template {
+    service_account = google_service_account.websocket_sa.email
+
+    containers {
+      image = var.websocket_image
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits = {
+          cpu    = "1"
+          memory = "512Mi"
+        }
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 10
+    }
+  }
+
+  depends_on = [google_project_service.apis]
+}
+
+# Allow Pub/Sub invoker to call the WebSocket service
+resource "google_cloud_run_v2_service_iam_member" "pubsub_invoke_websocket" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.websocket.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.pubsub_invoker_sa.email}"
+}
+
+# Allow unauthenticated access so clients can open WebSocket connections
+resource "google_cloud_run_v2_service_iam_member" "websocket_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.websocket.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }
 
 # ══════════════════════════════════════════════════════════════════

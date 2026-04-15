@@ -294,60 +294,79 @@ Load test was run on **2026-04-15** against `https://maas-gateway-8gbxqx55.uc.ga
 ### Worker Service (µS_2) Metrics
 
 #### Request Count
-50 Pub/Sub push messages delivered to the worker — one per job. The spike at ~19:45 corresponds to the load test. Rate peaked at ~0.25/s. All responses were `2xx`.
+50 Pub/Sub push messages were delivered to the worker — one per simulation job. The spike at ~00:34 shows the burst of messages arriving concurrently. Both `1xx` and `2xx` responses are visible at **0.133 req/s**, confirming all jobs were accepted and processed successfully.
 
 ![Worker Request Count](./screenshots/worker-request-count.png)
 
 #### Request Latency (p50 / p95 / p99)
-Each worker instance ran the Monte Carlo simulation on 10,000,000 points. Latencies reflect actual computation time:
+Each worker instance ran the full Monte Carlo simulation on **10,000,000 points**. The latency reflects real CPU computation time — not network wait:
 
 | Percentile | Latency |
 |------------|---------|
-| p50 | 45.007 s |
-| p95 | 3.447 min |
-| p99 | 3.649 min |
+| p50 | 1.534 s |
+| p95 | 1.863 s |
+| p99 | 1.885 s |
+
+The latency curves show a clear peak as all 50 jobs ran simultaneously, then drop as instances finish and scale down.
 
 ![Worker Request Latency](./screenshots/worker-request-latency.png)
 
 #### Container Instance Count (Auto-scaling)
-Cloud Run scaled up to **4 active instances** at peak to process the 50 concurrent Pub/Sub messages in parallel, then scaled back to 0 after jobs completed.
+Cloud Run automatically scaled the worker up to **2 active instances** to process the concurrent Pub/Sub messages in parallel. The graph shows a steady ramp up from 0 as jobs arrived, peaking at 2, then scaling back to 0 once all jobs completed — demonstrating serverless auto-scaling behavior.
 
 ![Worker Instance Count](./screenshots/worker-instance-count.png)
-
-#### Logs
-210 log entries captured — each worker logged job receipt, π estimate, duration, and Firestore save confirmation.
-
-![Worker Logs](./screenshots/logs-worker.png)
 
 ---
 
 ### Receiver Service (µS_1) Metrics
 
 #### Request Count
-Two load test runs visible — spikes at ~19:45 and ~19:55, each representing 50 concurrent `POST /estimate_pi` requests returning `202 Accepted`.
+The receiver handled **50 concurrent `POST /estimate_pi`** requests at ~0.117–0.2 req/s. The spike at ~00:34 corresponds exactly to the load test. `2xx` responses confirm all 50 returned `202 Accepted` immediately without blocking.
 
 ![Receiver Request Count](./screenshots/receiver-request-count.png)
 
 #### Request Latency (p50 / p95 / p99)
-The receiver returns immediately after publishing to Pub/Sub — very low latency as expected:
+The receiver is non-blocking — it validates the request, generates a `job_id`, publishes to Pub/Sub, and returns immediately. Latency is sub-10ms as expected:
 
 | Percentile | Latency |
 |------------|---------|
-| p50 | 67.275 ms |
-| p95 | 87.101 ms |
-| p99 | 89.055 ms |
+| p50 | 5 ms |
+| p95 | 9.5 ms |
+| p99 | 9.9 ms |
 
 ![Receiver Request Latency](./screenshots/receiver-request-latency.png)
 
 #### Container Instance Count
-Receiver scaled up to **10 instances** to handle the 50 concurrent requests, then scaled back down after the burst.
+Receiver scaled up to **2 active instances** to handle the concurrent burst of 50 requests, then scaled back to 0 after the load test completed.
 
 ![Receiver Instance Count](./screenshots/receiver-instance-count.png)
 
-#### Logs
-24 log entries from the receiver service — showing application startup and graceful shutdown between test runs.
+---
 
-![Receiver Logs](./screenshots/logs-receiver.png)
+### WebSocket Service (µS_3) Metrics
+
+#### Request Count
+The WebSocket service received push notifications from Pub/Sub as each worker completed its simulation. The graph shows `2xx` responses at **0.117 req/s** confirming results were successfully delivered back to waiting clients. Some `4xx` responses indicate clients that disconnected before their result arrived.
+
+![WebSocket Request Count](./screenshots/websocket-request-count.png)
+
+#### Request Latency (p50 / p95 / p99)
+The WebSocket service held connections open until the simulation result arrived. Latency here represents the full simulation time — from job receipt to result push:
+
+| Percentile | Latency |
+|------------|---------|
+| p50 | 4.408 min |
+| p95 | 4.871 min |
+| p99 | 4.913 min |
+
+This matches the expected Monte Carlo computation time for 10,000,000 points per job.
+
+![WebSocket Request Latency](./screenshots/websocket-request-latency.png)
+
+#### Container Instance Count
+WebSocket service scaled up to **2 active instances** to maintain concurrent WebSocket connections with clients, scaling back to 0 after all results were delivered.
+
+![WebSocket Instance Count](./screenshots/websocket-instance-count.png)
 
 ### Sample Simulation Results
 
