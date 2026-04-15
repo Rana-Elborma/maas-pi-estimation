@@ -24,7 +24,12 @@ A scalable, event-driven, serverless backend that estimates the value of **π** 
 
 ### Overview
 
-This system implements an **event-driven, serverless architecture** on Google Cloud Platform. When a client sends a request to estimate π, the **Receiver Service** immediately acknowledges it with a `202 Accepted` response and publishes an event to **Cloud Pub/Sub (EventBridge)**. The event then triggers the **Worker Service** (running on Cloud Run), which executes the Monte Carlo simulation and stores the result in **Cloud Firestore**.
+This system implements an **event-driven, serverless architecture** on Google Cloud Platform with **three microservices** (µS_1, µS_2, µS_3):
+
+1. The client sends a `POST /estimate_pi` request to the **API Gateway**, which forwards it to the **Receiver Service (µS_1)**.
+2. µS_1 immediately responds `202 Accepted` (non-blocking) and publishes a `pi_estimation_requested` event to the **Event Bridge (Cloud Pub/Sub)**.
+3. The event triggers one or more **Worker Services (µS_2)** in parallel — each runs the Monte Carlo π simulation and stores the result in **Cloud Firestore**.
+4. Once done, the worker emits a result event back through the Event Bridge to the **WebSocket Service (µS_3)**, which pushes the final π estimate to the client in real time.
 
 ### Architecture Diagram
 
@@ -35,34 +40,33 @@ This system implements an **event-driven, serverless architecture** on Google Cl
 | Step | Component | Action |
 |------|-----------|--------|
 | 1 | **Client** | Sends `POST /estimate_pi` with `{"total_points": N}` |
-| 2 | **API Gateway** | Routes the request to the Receiver Service |
-| 3 | **Receiver Service** | Returns `202 Accepted` immediately (non-blocking) |
-| 4 | **Receiver Service** | Publishes `pi_estimation_requested` event to Pub/Sub |
-| 5 | **Cloud Pub/Sub** | Triggers the Worker Service via push subscription |
-| 6 | **Worker Service** | Runs Monte Carlo simulation with `N` random points |
-| 7 | **Worker Service** | Persists `{job_id, total_points, pi_estimate, timestamp}` to Firestore |
+| 2 | **API Gateway** | Routes to Receiver Service (µS_1) |
+| 3 | **Receiver Service (µS_1)** | Returns `202 Accepted` immediately (non-blocking) |
+| 4 | **Receiver Service (µS_1)** | Publishes `pi_estimation_requested` event to Event Bridge |
+| 5 | **Event Bridge (Pub/Sub)** | Triggers one or more Worker Services (µS_2) in parallel |
+| 6 | **Worker Services (µS_2)** | Run Monte Carlo simulation with `N` random points each |
+| 7 | **Worker Services (µS_2)** | Store result in Cloud Firestore & emit a result event |
+| 8 | **WebSocket Service (µS_3)** | Receives the result event and pushes π estimate to the client |
 
 ### Component Descriptions
 
 #### 🔵 API Gateway (Cloud API Gateway)
 - Exposes the public REST endpoint: `POST /estimate_pi`
-- Handles authentication, rate limiting, and routing
-- Forwards valid requests to the **Receiver Service** on Cloud Run
+- Handles routing and forwards valid requests to **Receiver Service (µS_1)**
 
-#### 🟢 Receiver Service (Cloud Run)
-- Lightweight HTTP service
-- Validates the incoming JSON payload
-- Responds immediately with `202 Accepted` + a `job_id`
-- Publishes an event to Cloud Pub/Sub containing `job_id` and `total_points`
+#### 🟢 Receiver Service — µS_1 (Cloud Run)
+- Validates the incoming JSON payload `{total_points: N}`
+- Responds immediately with `202 Accepted` + a `job_id` (non-blocking)
+- Publishes a `pi_estimation_requested` event to the **Event Bridge**
 
-#### 🟠 Cloud Pub/Sub (EventBridge)
-- Acts as the **event bridge** between the Receiver and Worker services
-- Decouples the two services, enabling asynchronous, scalable processing
-- Push subscription delivers messages directly to the Worker Service endpoint
+#### 🟠 Event Bridge (Cloud Pub/Sub)
+- Decouples all microservices for async, scalable communication
+- Delivers `pi_estimation_requested` events to Worker Services
+- Routes result events from Workers back to the WebSocket Service
 
-#### 🟣 Worker Service (Cloud Run)
-- Triggered by Pub/Sub push subscription
-- Executes the Monte Carlo π estimation algorithm:
+#### 🔷 Worker Service — µS_2 (Cloud Run, auto-scaled)
+- **Multiple instances** can run in parallel ("many workers may work in parallel")
+- Each instance executes the Monte Carlo π estimation algorithm:
   ```python
   def estimate_pi(n):
       inside_circle = 0
@@ -72,16 +76,17 @@ This system implements an **event-driven, serverless architecture** on Google Cl
               inside_circle += 1
       return (4 * inside_circle) / n
   ```
-- Stores results in Cloud Firestore
+- Stores `{job_id, total_points, pi_estimate, timestamp, duration_ms}` in Firestore
+- Emits a result event back through the Event Bridge
+
+#### 🟣 WebSocket Service — µS_3 (Cloud Run)
+- Maintains a persistent WebSocket connection with the client
+- Listens for result events from the Event Bridge
+- **Pushes the final π estimate to the client in real time** (no polling needed)
 
 #### 🔴 Cloud Firestore (Data Store)
-- NoSQL document database
-- Stores each simulation result with:
-  - `job_id` — unique identifier
-  - `total_points` — number of Monte Carlo points used
-  - `pi_estimate` — computed value of π
-  - `timestamp` — UTC time of completion
-  - `duration_ms` — execution time in milliseconds
+- NoSQL document database — permanent storage for every simulation result
+- Fields per document: `job_id`, `total_points`, `pi_estimate`, `timestamp`, `duration_ms`
 
 ---
 
