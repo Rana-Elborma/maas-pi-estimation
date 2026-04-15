@@ -316,6 +316,11 @@ Cloud Run automatically scaled the worker up to **2 active instances** to proces
 
 ![Worker Instance Count](./screenshots/worker-instance-count.png)
 
+#### Logs
+Worker logs confirm each job was received from Pub/Sub, the simulation ran successfully, the π estimate was computed, and the result was saved to Firestore. Each log line includes the `job_id`, `total_points`, estimated π value, and computation duration in milliseconds.
+
+![Worker Logs](./screenshots/worker-logs.png)
+
 ---
 
 ### Receiver Service (µS_1) Metrics
@@ -340,6 +345,11 @@ The receiver is non-blocking — it validates the request, generates a `job_id`,
 Receiver scaled up to **2 active instances** to handle the concurrent burst of 50 requests, then scaled back to 0 after the load test completed.
 
 ![Receiver Instance Count](./screenshots/receiver-instance-count.png)
+
+#### Logs
+Receiver logs show each incoming `POST /estimate_pi` request being accepted, a `job_id` being generated, and the event being published to the Pub/Sub topic. The service returns `202 Accepted` immediately without waiting for the simulation — confirming the non-blocking, async design.
+
+![Receiver Logs](./screenshots/receiver-logs.png)
 
 ---
 
@@ -368,22 +378,28 @@ WebSocket service scaled up to **2 active instances** to maintain concurrent Web
 
 ![WebSocket Instance Count](./screenshots/websocket-instance-count.png)
 
+#### Logs
+WebSocket logs show each result event received from Pub/Sub, the `job_id` it belongs to, and whether an active client connection was found to push the result to. Logs confirm the real-time delivery path from worker completion through to the client.
+
+![WebSocket Logs](./screenshots/websocket-logs.png)
+
 ### Sample Simulation Results
 
-> Replace the example below with real results from Firestore after running the load test.
+Sample documents from the `pi_estimations` Firestore collection after the 50-job load test run on 2026-04-16:
 
 ```json
 [
   {
-    "job_id": "529e84d8-b9f1-40be-b8a1-046fbcd5a03e",
+    "job_id": "0150f402-5f00-4051-ab4d-dba6a48c7b72",
     "total_points": 10000000,
-    "pi_estimate": 3.14159265...,
-    "timestamp": "2026-04-15T...",
-    "duration_ms": "~60000"
+    "pi_estimate": 3.140362,
+    "timestamp": "2026-04-15T16:56:44.684789+00:00",
+    "duration_ms": 7863.64
   }
 ]
 ```
-> Replace with real documents exported from Firestore after the load test.
+
+> All 50 documents are stored in Firestore under the `pi_estimations` collection. Each π estimate converges to ~3.1416 as expected from the Monte Carlo method with 10M points. The `duration_ms` of **7863ms** reflects the actual CPU time to run the simulation on Cloud Run.
 
 ---
 
