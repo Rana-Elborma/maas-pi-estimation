@@ -387,16 +387,6 @@ WebSocket service scaled up to **2 active instances** to maintain concurrent Web
 
 ---
 
-## Contributors
-
-| Name | Role |
-|------|------|
-| Rana Elborma | Architecture, Receiver Service, Terraform |
-| *(Team member 2)* | Worker Service |
-| *(Team member 3)* | Load Testing / Firestore |
-
----
-
 ## License
 
 This homework is submitted for academic purposes — SWE 455, Term 252.
